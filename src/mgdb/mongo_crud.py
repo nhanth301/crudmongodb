@@ -15,18 +15,35 @@ from ensure import ensure_annotations
 
 
 class mongo_operation:
+    __collection=None # here i have created a private/protected variable
+    __database=None
     
-    def __init__(self,client_url: str, database_name: str):
-        self.client_url = client_url
-        self.database_name = database_name
-        self.client = MongoClient(self.client_url)
+    def __init__(self,client_url: str, database_name: str, collection_name: str=None):
+        self.client_url=client_url
+        self.database_name=database_name
+        self.collection_name=collection_name
+       
+    def create_mongo_client(self,collection=None):
+        client=MongoClient(self.client_url)
+        return client
     
-    def create_database(self):
-        self.database = self.client[self.database_name]
-        return self.database
+    def create_database(self,collection=None):
+        if mongo_operation.__database==None:
+            client=self.create_mongo_client(collection)
+            self.database=client[self.database_name]
+        return self.database 
     
-    def create_collection(self,collection_name):
-        self.collection= self.create_database()[collection_name] 
+    def create_collection(self,collection=None):
+        if mongo_operation.__collection==None:
+            database=self.create_database(collection)
+            self.collection=database[self.collection_name]
+            mongo_operation.__collection=collection
+        
+        if mongo_operation.__collection!=collection:
+            database=self.create_database(collection)
+            self.collection=database[self.collection_name]
+            mongo_operation.__collection=collection
+            
         return self.collection
     
     def insert_record(self,record: dict, collection_name: str) -> Any:
@@ -50,18 +67,5 @@ class mongo_operation:
             dataframe=pd.read_excel(self.path,encoding='utf-8')
             
         datajson=json.loads(dataframe.to_json(orient='record'))
-        collection=self.create_collection(collection_name)
+        collection=self.create_collection()
         collection.insert_many(datajson)
-
-# if __name__ == "__main__":
-#     uri = "mongodb+srv://thnhan3011:30113011@cluster0.ejtjszb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-#     db_name = "TESTDB"
-#     collection_name = "employee"
-
-#     mgdb = mongo_operation(uri,db_name)
-#     data = {
-#         "name" : "Nguyen Thien Nhan",
-#         "age" : 21,
-#         "education" : "SPKT"
-#     }
-#     mgdb.insert_record(data, collection_name)
