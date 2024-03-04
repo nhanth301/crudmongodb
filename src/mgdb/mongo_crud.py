@@ -53,15 +53,15 @@ class mongo_operation:
         collection=self.create_collection(collection_name)
         collection.insert_many(datajson)
 
-if __name__ == "__main__":
-    uri = "mongodb+srv://thnhan3011:30113011@cluster0.ejtjszb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-    db_name = "TESTDB"
-    collection_name = "employee"
+# if __name__ == "__main__":
+#     uri = "mongodb+srv://thnhan3011:30113011@cluster0.ejtjszb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+#     db_name = "TESTDB"
+#     collection_name = "employee"
 
-    mgdb = mongo_operation(uri,db_name)
-    data = {
-        "name" : "Nguyen Thien Nhan",
-        "age" : 21,
-        "education" : "SPKT"
-    }
-    mgdb.insert_record(data, collection_name)
+#     mgdb = mongo_operation(uri,db_name)
+#     data = {
+#         "name" : "Nguyen Thien Nhan",
+#         "age" : 21,
+#         "education" : "SPKT"
+#     }
+#     mgdb.insert_record(data, collection_name)
